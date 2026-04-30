@@ -4,7 +4,7 @@ import { AuthContext } from '../context/AuthContext';
 import { cn } from '../lib/utils';
 import { Button } from './ui/button';
 import {
-  Menu, X, Zap, BookOpen, LayoutDashboard, LogOut, ChevronDown, GraduationCap
+  Menu, X, BookOpen, Calendar, LayoutDashboard, LogOut, GraduationCap
 } from 'lucide-react';
 import React from 'react';
 
@@ -30,10 +30,11 @@ const Navbar = () => {
     navigate('/');
   };
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
 
   const navLinks = [
     { to: '/courses', label: 'Courses', icon: BookOpen },
+    { to: '/batches', label: 'Batches', icon: Calendar },
   ];
 
   return (

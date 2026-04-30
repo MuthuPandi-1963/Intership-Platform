@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -33,19 +30,21 @@ model Course {
   id          Int      @id @default(autoincrement())
   title       String
   description String
-  image       String    @default("https://static.vecteezy.com/system/resources/previews/027/052/565/non_2x/computer-futuristic-high-tech-circuit-board-with-microcircuits-and-electronic-chips-with-transistors-and-resistors-ai-generated-free-photo.jpg")   // URL to course image
+  image       String   @default("https://static.vecteezy.com/system/resources/previews/027/052/565/non_2x/computer-futuristic-high-tech-circuit-board-with-microcircuits-and-electronic-chips-with-transistors-and-resistors-ai-generated-free-photo.jpg")
   fee         Float
-  duration    String   // e.g. "1 Month"
-  syllabus    Json     // Array of week-wise topics
-  techStack   String[] // e.g. ["React", "Node.js"]
+  duration    String
+  syllabus    Json
+  techStack   String[]
   batches     Batch[]
   createdAt   DateTime @default(now())
 }
 
 model Batch {
   id          Int           @id @default(autoincrement())
-  course      Course        @relation(fields: [courseId], references: [id])
-  courseId    Int
+  name        String        @unique
+  description String?
+  fee         Float         @default(0)
+  courses     Course[]
   startDate   DateTime
   totalSeats  Int           @default(100)
   status      BatchStatus   @default(NOT_STARTED)
@@ -70,13 +69,13 @@ model Enrollment {
 }
 
 model Payment {
-  id           Int           @id @default(autoincrement())
-  enrollment   Enrollment    @relation(fields: [enrollmentId], references: [id])
-  enrollmentId Int           @unique
-  amount       Float
-  status       PaymentStatus @default(PENDING)
+  id            Int           @id @default(autoincrement())
+  enrollment    Enrollment    @relation(fields: [enrollmentId], references: [id])
+  enrollmentId  Int           @unique
+  amount        Float
+  status        PaymentStatus @default(PENDING)
   transactionId String?
-  paidAt       DateTime?
+  paidAt        DateTime?
 }
 
 enum PaymentStatus {

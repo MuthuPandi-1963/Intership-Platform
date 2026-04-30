@@ -52,7 +52,7 @@ const CourseDetail = () => {
           const enrollRes = await axios.get('/api/enrollments/my');
           const myEnrollments = enrollRes.data.enrollments || [];
           const alreadyIn = myEnrollments.some(
-            (e) => e.batch?.course?.id === parseInt(id) || e.batch?.courseId === parseInt(id)
+            (e) => e.batch?.courses?.some(c => c.id === parseInt(id))
           );
           setIsAlreadyEnrolled(alreadyIn);
         }
@@ -97,18 +97,19 @@ const CourseDetail = () => {
 
   const batch = course.batches?.[0];
   const seatsLeft = batch ? batch.totalSeats - (batch.enrollments?.length || batch.enrolledCount || 0) : 0;
-  const startDate = batch?.startDate ? new Date(batch.startDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : 'TBD';
+  const startDate = batch?.startDate
+    ? new Date(batch.startDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
+    : 'TBD';
+  const displayFee = batch?.fee ?? course.fee;
 
   return (
     <div className="min-h-screen">
       <div className="container mx-auto px-4 sm:px-6 py-8 max-w-5xl">
-        {/* Back */}
         <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-sm text-white/40 hover:text-white mb-6 transition-colors group">
           <ArrowLeft size={15} className="group-hover:-translate-x-0.5 transition-transform" />
           Back to courses
         </button>
 
-        {/* Hero image */}
         {course.image && (
           <div className="relative h-56 sm:h-72 rounded-2xl overflow-hidden mb-8 border border-white/6">
             <img src={course.image} alt={course.title} className="w-full h-full object-cover" />
@@ -119,12 +120,10 @@ const CourseDetail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main content */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Title */}
             <div>
               <div className="flex flex-wrap gap-2 mb-3">
                 {batch?.status === 'ONGOING' && <Badge variant="success">Live Batch</Badge>}
                 {batch?.status === 'NOT_STARTED' && <Badge variant="info">Upcoming</Badge>}
-                {/* {seatsLeft <= 20 && seatsLeft > 0 && <Badge variant="warning">Only {seatsLeft} seats left</Badge>} */}
               </div>
               <h1 className="text-3xl font-bold text-white mb-3">{course.title}</h1>
               <p className="text-white/50 leading-relaxed">{course.description}</p>
@@ -132,7 +131,6 @@ const CourseDetail = () => {
 
             <Separator />
 
-            {/* Tech stack */}
             <div>
               <h2 className="text-lg font-semibold text-white mb-4">Technologies Covered</h2>
               <div className="flex flex-wrap gap-2">
@@ -146,7 +144,6 @@ const CourseDetail = () => {
 
             <Separator />
 
-            {/* Syllabus accordion */}
             <div>
               <h2 className="text-lg font-semibold text-white mb-4">Syllabus</h2>
               <div className="space-y-2">
@@ -186,16 +183,17 @@ const CourseDetail = () => {
               <CardHeader className="pb-4">
                 <CardTitle className="text-2xl font-bold text-white">
                   <span className="text-white/40 text-sm font-normal mr-1">₹</span>
-                  {course.fee?.toLocaleString('en-IN')}
+                  {displayFee?.toLocaleString('en-IN')}
                 </CardTitle>
+                {batch?.name && (
+                  <p className="text-xs text-white/40 mt-1">{batch.name}</p>
+                )}
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Details */}
                 <div className="space-y-3">
                   {[
                     { icon: Clock, label: 'Duration', value: course.duration },
                     { icon: CalendarDays, label: 'Start Date', value: startDate },
-                    // { icon: Users, label: 'Seats Left', value: seatsLeft > 0 ? `${seatsLeft} seats` : 'Batch Full' },
                   ].map(({ icon: Icon, label, value }) => (
                     <div key={label} className="flex items-center justify-between text-sm">
                       <div className="flex items-center gap-2 text-white/40">
@@ -209,7 +207,6 @@ const CourseDetail = () => {
 
                 <Separator />
 
-                {/* Includes */}
                 <div className="space-y-2">
                   {['Certificate of completion', 'Placement support', 'Real project experience', 'Live mentorship sessions'].map((item) => (
                     <div key={item} className="flex items-center gap-2 text-xs text-white/50">
@@ -237,12 +234,7 @@ const CourseDetail = () => {
                     </Button>
                   </div>
                 ) : (
-                  <Button
-                    variant="gradient"
-                    size="lg"
-                    className="w-full"
-                    onClick={handleEnroll}
-                  >
+                  <Button variant="gradient" size="lg" className="w-full" onClick={handleEnroll}>
                     Enroll Now
                   </Button>
                 )}
@@ -274,6 +266,12 @@ const CourseDetail = () => {
                 <span className="text-white/50">Course</span>
                 <span className="text-white font-medium">{course.title}</span>
               </div>
+              {batch?.name && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-white/50">Batch</span>
+                  <span className="text-white/70">{batch.name}</span>
+                </div>
+              )}
               <div className="flex justify-between text-sm">
                 <span className="text-white/50">Duration</span>
                 <span className="text-white/70">{course.duration}</span>
@@ -281,7 +279,7 @@ const CourseDetail = () => {
               <Separator />
               <div className="flex justify-between">
                 <span className="text-white/50">Total Amount</span>
-                <span className="text-white font-bold text-lg">₹{course.fee?.toLocaleString('en-IN')}</span>
+                <span className="text-white font-bold text-lg">₹{displayFee?.toLocaleString('en-IN')}</span>
               </div>
             </div>
 

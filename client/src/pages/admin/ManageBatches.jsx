@@ -4,11 +4,14 @@ import { Card, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
-import { Select } from '../../components/ui/select';
 import { Badge } from '../../components/ui/badge';
 import { Skeleton } from '../../components/ui/skeleton';
+import { Textarea } from '../../components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
-import { Plus, Calendar, Users, PlayCircle, CheckCircle2, Clock, X, Mail, Phone, IndianRupee } from 'lucide-react';
+import {
+  Plus, Calendar, Users, PlayCircle, CheckCircle2, Clock,
+  X, Mail, Phone, IndianRupee, Pencil, Trash2, BookOpen,
+} from 'lucide-react';
 import React from 'react';
 
 const STATUS_BADGE = {
@@ -17,22 +20,31 @@ const STATUS_BADGE = {
   COMPLETED: { variant: 'success', label: 'Completed' },
 };
 
+const EMPTY_FORM = { name: '', description: '', fee: '', courseIds: [], startDate: '', totalSeats: '100' };
+
 const ManageBatches = () => {
   const [batches, setBatches] = useState([]);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [formData, setFormData] = useState({ courseId: '', startDate: '', totalSeats: '100' });
+  const [editBatch, setEditBatch] = useState(null);
+  const [formData, setFormData] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState('');
   const [detailBatch, setDetailBatch] = useState(null);
   const [batchStudents, setBatchStudents] = useState([]);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => { fetchData(); }, []);
 
   const fetchData = async () => {
     try {
-      const [bR, cR] = await Promise.all([axios.get('/api/batches'), axios.get('/api/courses')]);
+      const [bR, cR] = await Promise.all([
+        axios.get('/api/batches'),
+        axios.get('/api/courses'),
+      ]);
       setBatches(bR.data?.batches || []);
       setCourses(cR.data?.courses || []);
     } catch (e) {
@@ -42,22 +54,79 @@ const ManageBatches = () => {
     }
   };
 
-  const handleCreate = async (e) => {
+  const openCreate = () => {
+    setEditBatch(null);
+    setFormData(EMPTY_FORM);
+    setFormError('');
+    setDialogOpen(true);
+  };
+
+  const openEdit = (batch, e) => {
+    e.stopPropagation();
+    setEditBatch(batch);
+    setFormData({
+      name: batch.name,
+      description: batch.description || '',
+      fee: String(batch.fee),
+      courseIds: batch.courses.map(c => c.id),
+      startDate: batch.startDate ? new Date(batch.startDate).toISOString().split('T')[0] : '',
+      totalSeats: String(batch.totalSeats),
+    });
+    setFormError('');
+    setDialogOpen(true);
+  };
+
+  const toggleCourse = (courseId) => {
+    setFormData(prev => {
+      const ids = prev.courseIds.includes(courseId)
+        ? prev.courseIds.filter(id => id !== courseId)
+        : [...prev.courseIds, courseId];
+      return { ...prev, courseIds: ids };
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormError('');
+    if (!formData.name.trim()) return setFormError('Batch name is required.');
+    if (formData.courseIds.length === 0) return setFormError('Select at least one course.');
+    if (!formData.startDate) return setFormError('Start date is required.');
+
     setSaving(true);
     try {
-      await axios.post('/api/batches', {
-        courseId: parseInt(formData.courseId),
-        startDate: new Date(formData.startDate),
-        totalSeats: parseInt(formData.totalSeats),
-      });
+      const payload = {
+        name: formData.name.trim(),
+        description: formData.description.trim(),
+        fee: parseFloat(formData.fee) || 0,
+        courseIds: formData.courseIds,
+        startDate: formData.startDate,
+        totalSeats: parseInt(formData.totalSeats) || 100,
+      };
+      if (editBatch) {
+        await axios.put(`/api/batches/${editBatch.id}`, payload);
+      } else {
+        await axios.post('/api/batches', payload);
+      }
       setDialogOpen(false);
-      setFormData({ courseId: '', startDate: '', totalSeats: '100' });
+      fetchData();
+    } catch (err) {
+      setFormError(err.response?.data?.error || 'Failed to save batch.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try {
+      await axios.delete(`/api/batches/${deleteTarget.id}`);
+      setDeleteTarget(null);
       fetchData();
     } catch (err) {
       console.error(err);
     } finally {
-      setSaving(false);
+      setDeleting(false);
     }
   };
 
@@ -91,7 +160,7 @@ const ManageBatches = () => {
           <h1 className="text-2xl font-bold text-white">Batches</h1>
           <p className="text-sm text-white/40 mt-1">{batches.length} batch{batches.length !== 1 ? 'es' : ''} total</p>
         </div>
-        <Button variant="gradient" onClick={() => setDialogOpen(true)} className="gap-2">
+        <Button variant="gradient" onClick={openCreate} className="gap-2">
           <Plus size={15} /> New Batch
         </Button>
       </div>
@@ -108,7 +177,7 @@ const ManageBatches = () => {
             <Calendar size={22} className="text-white/20" />
           </div>
           <p className="text-white/40 mb-4">No batches yet</p>
-          <Button variant="outline" onClick={() => setDialogOpen(true)} className="gap-2">
+          <Button variant="outline" onClick={openCreate} className="gap-2">
             <Plus size={14} /> Create first batch
           </Button>
         </div>
@@ -121,12 +190,29 @@ const ManageBatches = () => {
             return (
               <Card key={batch.id} className="hover:border-white/10 transition-all cursor-pointer" onClick={() => openBatchDetail(batch)}>
                 <CardContent className="p-5">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
+                      {/* Name + status */}
                       <div className="flex items-center gap-2.5 mb-1">
-                        <h3 className="font-medium text-white truncate">{batch.course?.title}</h3>
+                        <h3 className="font-semibold text-white truncate">{batch.name}</h3>
                         <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
                       </div>
+
+                      {/* Description */}
+                      {batch.description && (
+                        <p className="text-xs text-white/40 mb-2 line-clamp-1">{batch.description}</p>
+                      )}
+
+                      {/* Courses */}
+                      <div className="flex flex-wrap gap-1.5 mb-2">
+                        {batch.courses?.map(c => (
+                          <span key={c.id} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+                            <BookOpen size={10} /> {c.title}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Meta row */}
                       <div className="flex flex-wrap items-center gap-4 text-xs text-white/40">
                         <span className="flex items-center gap-1.5">
                           <Calendar size={12} />
@@ -134,22 +220,24 @@ const ManageBatches = () => {
                         </span>
                         <span className="flex items-center gap-1.5">
                           <Users size={12} />
-                          {enrolled} / {batch.totalSeats} enrolled
+                          {enrolled} / {batch.totalSeats}
+                        </span>
+                        <span className="flex items-center gap-1.5 text-emerald-400/70">
+                          <IndianRupee size={12} />
+                          {batch.fee?.toLocaleString('en-IN')}
                         </span>
                       </div>
-                      {/* Enrollment progress */}
+
+                      {/* Progress */}
                       <div className="mt-3 flex items-center gap-2">
                         <div className="flex-1 h-1.5 rounded-full bg-white/5">
-                          <div
-                            className="h-full rounded-full bg-indigo-500 transition-all"
-                            style={{ width: `${pct}%` }}
-                          />
+                          <div className="h-full rounded-full bg-indigo-500 transition-all" style={{ width: `${pct}%` }} />
                         </div>
                         <span className="text-xs text-white/30">{pct}%</span>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center gap-2 shrink-0" onClick={e => e.stopPropagation()}>
                       {batch.status === 'NOT_STARTED' && (
                         <Button variant="success" size="sm" className="gap-1.5" onClick={() => updateStatus(batch.id, 'ONGOING')}>
                           <PlayCircle size={13} /> Start
@@ -160,6 +248,12 @@ const ManageBatches = () => {
                           <CheckCircle2 size={13} /> Complete
                         </Button>
                       )}
+                      <Button variant="outline" size="sm" className="gap-1.5" onClick={e => openEdit(batch, e)}>
+                        <Pencil size={13} />
+                      </Button>
+                      <Button variant="destructive" size="sm" className="gap-1.5" onClick={e => { e.stopPropagation(); setDeleteTarget(batch); }}>
+                        <Trash2 size={13} />
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
@@ -174,10 +268,12 @@ const ManageBatches = () => {
         <>
           <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm" onClick={() => setDetailBatch(null)} />
           <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-2xl max-h-[85vh] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/10 bg-[#0d0d1a] flex flex-col shadow-2xl">
-            {/* Header */}
             <div className="flex items-start justify-between p-6 border-b border-white/8 shrink-0">
               <div>
-                <h2 className="text-lg font-semibold text-white">{detailBatch.course?.title}</h2>
+                <h2 className="text-lg font-semibold text-white">{detailBatch.name}</h2>
+                {detailBatch.description && (
+                  <p className="text-xs text-white/40 mt-0.5">{detailBatch.description}</p>
+                )}
                 <div className="flex flex-wrap gap-4 mt-2 text-xs text-white/40">
                   <span className="flex items-center gap-1.5"><Calendar size={12} />
                     {new Date(detailBatch.startDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
@@ -185,7 +281,17 @@ const ManageBatches = () => {
                   <span className="flex items-center gap-1.5"><Users size={12} />
                     {detailBatch.enrollments?.length || 0} / {detailBatch.totalSeats} seats
                   </span>
+                  <span className="flex items-center gap-1.5 text-emerald-400/80">
+                    <IndianRupee size={12} />₹{detailBatch.fee?.toLocaleString('en-IN')}
+                  </span>
                   <Badge variant={STATUS_BADGE[detailBatch.status]?.variant}>{STATUS_BADGE[detailBatch.status]?.label}</Badge>
+                </div>
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {detailBatch.courses?.map(c => (
+                    <span key={c.id} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+                      <BookOpen size={10} /> {c.title}
+                    </span>
+                  ))}
                 </div>
               </div>
               <button onClick={() => setDetailBatch(null)} className="text-white/40 hover:text-white p-1 rounded-lg hover:bg-white/5 shrink-0">
@@ -193,7 +299,6 @@ const ManageBatches = () => {
               </button>
             </div>
 
-            {/* Students list */}
             <div className="overflow-y-auto flex-1 p-6">
               <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider mb-4">
                 Enrolled Students ({batchStudents.length})
@@ -211,7 +316,7 @@ const ManageBatches = () => {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {batchStudents.map((enrollment, i) => {
+                  {batchStudents.map((enrollment) => {
                     const s = enrollment.student;
                     const paid = enrollment.payment?.status === 'SUCCESS';
                     return (
@@ -240,37 +345,131 @@ const ManageBatches = () => {
         </>
       )}
 
-      {/* Create Dialog */}
+      {/* Create / Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Create New Batch</DialogTitle>
+            <DialogTitle>{editBatch ? 'Edit Batch' : 'Create New Batch'}</DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleCreate}>
-            <div className="space-y-4 mb-6">
+          <form onSubmit={handleSubmit}>
+            <div className="space-y-4 mb-6 max-h-[60vh] overflow-y-auto pr-1">
+
               <div className="space-y-1.5">
-                <Label>Course *</Label>
-                <Select value={formData.courseId} onChange={(e) => setFormData({ ...formData, courseId: e.target.value })} required>
-                  <option value="">Select a course</option>
-                  {courses.map((c) => <option key={c.id} value={c.id}>{c.title}</option>)}
-                </Select>
+                <Label>Batch Name *</Label>
+                <Input
+                  placeholder="e.g. Full Stack Batch 2025 A"
+                  value={formData.name}
+                  onChange={e => setFormData({ ...formData, name: e.target.value })}
+                  required
+                />
               </div>
+
               <div className="space-y-1.5">
-                <Label>Start Date *</Label>
-                <Input type="date" value={formData.startDate} onChange={(e) => setFormData({ ...formData, startDate: e.target.value })} required />
+                <Label>Description</Label>
+                <Textarea
+                  placeholder="Brief description of this batch…"
+                  value={formData.description}
+                  onChange={e => setFormData({ ...formData, description: e.target.value })}
+                  rows={2}
+                />
               </div>
+
               <div className="space-y-1.5">
-                <Label>Total Seats *</Label>
-                <Input type="number" min="1" value={formData.totalSeats} onChange={(e) => setFormData({ ...formData, totalSeats: e.target.value })} required />
+                <Label>Batch Fee (₹) *</Label>
+                <Input
+                  type="number"
+                  min="0"
+                  step="1"
+                  placeholder="e.g. 4500"
+                  value={formData.fee}
+                  onChange={e => setFormData({ ...formData, fee: e.target.value })}
+                  required
+                />
               </div>
+
+              <div className="space-y-1.5">
+                <Label>Courses Included * <span className="text-white/30 font-normal">(select one or more)</span></Label>
+                <div className="rounded-lg border border-white/10 bg-white/3 p-3 space-y-2 max-h-44 overflow-y-auto">
+                  {courses.length === 0 ? (
+                    <p className="text-xs text-white/30 text-center py-2">No courses available</p>
+                  ) : courses.map(c => {
+                    const checked = formData.courseIds.includes(c.id);
+                    return (
+                      <label key={c.id} className="flex items-center gap-3 cursor-pointer group">
+                        <div
+                          onClick={() => toggleCourse(c.id)}
+                          className={`w-4 h-4 rounded shrink-0 border flex items-center justify-center transition-colors cursor-pointer ${
+                            checked
+                              ? 'bg-indigo-500 border-indigo-500'
+                              : 'border-white/20 bg-white/5 group-hover:border-indigo-400/50'
+                          }`}
+                        >
+                          {checked && <CheckCircle2 size={10} className="text-white" />}
+                        </div>
+                        <span className="text-sm text-white/80 leading-snug select-none" onClick={() => toggleCourse(c.id)}>
+                          {c.title}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label>Start Date *</Label>
+                  <Input
+                    type="date"
+                    value={formData.startDate}
+                    onChange={e => setFormData({ ...formData, startDate: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Total Seats *</Label>
+                  <Input
+                    type="number"
+                    min="1"
+                    value={formData.totalSeats}
+                    onChange={e => setFormData({ ...formData, totalSeats: e.target.value })}
+                    required
+                  />
+                </div>
+              </div>
+
+              {formError && (
+                <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+                  {formError}
+                </p>
+              )}
             </div>
+
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
               <Button type="submit" variant="gradient" disabled={saving}>
-                {saving ? 'Creating...' : 'Create Batch'}
+                {saving ? (editBatch ? 'Saving…' : 'Creating…') : (editBatch ? 'Save Changes' : 'Create Batch')}
               </Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirm Dialog */}
+      <Dialog open={!!deleteTarget} onOpenChange={open => !open && setDeleteTarget(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Delete Batch</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-white/60 mb-6">
+            Are you sure you want to delete <span className="text-white font-medium">"{deleteTarget?.name}"</span>?
+            This will also remove all enrollments in this batch.
+          </p>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setDeleteTarget(null)}>Cancel</Button>
+            <Button variant="destructive" onClick={handleDelete} disabled={deleting}>
+              {deleting ? 'Deleting…' : 'Delete Batch'}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

@@ -41,8 +41,8 @@ const StudentDashboard = () => {
 
   const stats = {
     total: enrollments.length,
-    ongoing:enrollments.length > 0 ? enrollments.filter((e) => e.batch?.status === 'ONGOING').length : 0,
-    completed: enrollments.length > 0 ? enrollments.filter((e) => e.batch?.status === 'COMPLETED').length : 0,
+    ongoing: enrollments.filter((e) => e.batch?.status === 'ONGOING').length,
+    completed: enrollments.filter((e) => e.batch?.status === 'COMPLETED').length,
   };
 
   return (
@@ -64,7 +64,6 @@ const StudentDashboard = () => {
             </Link>
           </div>
 
-          {/* Quick stats */}
           {!loading && enrollments.length > 0 && (
             <div className="flex flex-wrap gap-4 mt-6">
               {[
@@ -107,9 +106,9 @@ const StudentDashboard = () => {
           <>
             <h2 className="text-base font-semibold text-white mb-5">My Enrolled Programs</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {enrollments.length && enrollments.map((enrollment) => {
-                const course = enrollment.batch?.course;
+              {enrollments.map((enrollment) => {
                 const batch = enrollment.batch;
+                const firstCourse = batch?.courses?.[0];
                 const statusCfg = STATUS_CONFIG[batch?.status] || STATUS_CONFIG.NOT_STARTED;
                 const startDate = batch?.startDate
                   ? new Date(batch.startDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
@@ -117,22 +116,29 @@ const StudentDashboard = () => {
 
                 return (
                   <Card key={enrollment.id} className="flex flex-col hover:border-white/10 transition-all overflow-hidden">
-                    {course?.image ? (
-                      <img src={course.image} alt={course.title} className="h-36 w-full object-cover" />
+                    {firstCourse?.image ? (
+                      <img src={firstCourse.image} alt={firstCourse.title} className="h-36 w-full object-cover" />
                     ) : (
                       <div className="h-36 bg-linear-to-br from-indigo-500/10 to-violet-500/10 flex items-center justify-center">
                         <BookOpen size={28} className="text-white/15" />
                       </div>
                     )}
                     <CardContent className="p-5 flex flex-col flex-1">
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <h3 className="font-semibold text-white text-sm leading-snug">{course?.title}</h3>
+                      <div className="flex items-start justify-between gap-2 mb-1">
+                        <h3 className="font-semibold text-white text-sm leading-snug">{batch?.name}</h3>
                         <Badge variant={statusCfg.variant} className="shrink-0">{statusCfg.label}</Badge>
                       </div>
-                      <p className="text-xs text-white/40 line-clamp-2 mb-4 flex-1">{course?.description}</p>
-                      <div className="grid grid-cols-2 gap-2 text-xs text-white/40">
-                        <span className="flex items-center gap-1.5"><Clock size={11} />{course?.duration}</span>
-                        <span className="flex items-center gap-1.5"><IndianRupee size={11} />{course?.fee?.toLocaleString('en-IN')}</span>
+                      {/* Courses included */}
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        {batch?.courses?.map(c => (
+                          <span key={c.id} className="text-xs text-white/40 bg-white/5 px-1.5 py-0.5 rounded">
+                            {c.title}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-xs text-white/40 mt-auto">
+                        <span className="flex items-center gap-1.5"><Clock size={11} />{firstCourse?.duration || '—'}</span>
+                        <span className="flex items-center gap-1.5"><IndianRupee size={11} />{batch?.fee?.toLocaleString('en-IN')}</span>
                         <span className="flex items-center gap-1.5 col-span-2"><CalendarDays size={11} />Batch started {startDate}</span>
                       </div>
                     </CardContent>

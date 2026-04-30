@@ -6,6 +6,7 @@ import Footer from './components/Footer';
 import AdminLayout from './components/AdminLayout';
 import Home from './pages/Home';
 import Courses from './pages/Courses';
+import Batches from './pages/Batches';
 import CourseDetail from './pages/CourseDetail';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -57,6 +58,7 @@ function Layout() {
           <Route path="/" element={<Home />} />
           <Route path="/courses" element={<Courses />} />
           <Route path="/courses/:id" element={<CourseDetail />} />
+          <Route path="/batches" element={<Batches />} />
           <Route path="/dashboard" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
         </Routes>
       </main>

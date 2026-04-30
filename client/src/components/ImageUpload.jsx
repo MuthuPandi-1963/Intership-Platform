@@ -1,10 +1,8 @@
 import { useState, useRef } from 'react';
-import { Upload, X, ImageIcon, Loader2 } from 'lucide-react';
+import { Upload, X, Loader2 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import axios from 'axios';
 import React from 'react';
-
-const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
 const ImageUpload = ({ value, onChange, className }) => {
   const [uploading, setUploading] = useState(false);
@@ -24,34 +22,23 @@ const ImageUpload = ({ value, onChange, className }) => {
     }
 
     setError('');
+    setUploading(true);
+
+    // Show local preview immediately
     const localUrl = URL.createObjectURL(file);
     setPreview(localUrl);
 
-    if (!CLOUD_NAME || !UPLOAD_PRESET) {
-      onChange(localUrl);
-      return;
-    }
-
-    setUploading(true);
     try {
       const form = new FormData();
-      form.append('file', file);
-      form.append('upload_preset', UPLOAD_PRESET);
-      form.append('folder', 'internhub/courses');
-
-      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
-        method: 'POST',
-        body: form,
+      form.append('image', file);
+      const res = await axios.post('/api/uploads', form, {
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
-      const data = await res.json();
-      if (data.secure_url) {
-        setPreview(data.secure_url);
-        onChange(data.secure_url);
-      } else {
-        throw new Error(data.error?.message || 'Upload failed');
-      }
+      const serverUrl = res.data.url;
+      setPreview(serverUrl);
+      onChange(serverUrl);
     } catch (err) {
-      setError(err.message || 'Upload failed');
+      setError(err.response?.data?.error || 'Upload failed');
       onChange(localUrl);
     } finally {
       setUploading(false);
@@ -125,13 +112,6 @@ const ImageUpload = ({ value, onChange, className }) => {
           className="hidden"
           onChange={(e) => handleFile(e.target.files?.[0])}
         />
-      )}
-
-      {!CLOUD_NAME && (
-        <p className="text-xs text-amber-400/70 flex items-center gap-1.5">
-          <ImageIcon size={11} />
-          Add VITE_CLOUDINARY_CLOUD_NAME to .env for cloud uploads
-        </p>
       )}
 
       {error && <p className="text-xs text-red-400">{error}</p>}

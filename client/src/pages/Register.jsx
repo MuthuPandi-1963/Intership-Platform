@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
+import { Select } from '../components/ui/select';
 import { GraduationCap, Eye, EyeOff, AlertCircle, ArrowRight, CheckCircle2 } from 'lucide-react';
 import React from 'react';
 
@@ -13,6 +14,37 @@ const PERKS = [
   'Industry-recognized certification',
   'Placement support & resume review',
 ];
+
+const BRANCHES = {
+  'IT / Software-Aligned': [
+    'Computer Science & Engineering (CSE)',
+    'Information Technology (IT)',
+    'Information Science & Engineering (ISE)',
+    'Computer Science & Business Systems (CSBS)',
+    'Artificial Intelligence & Machine Learning (AIML)',
+    'Computer Science & Data Science (CSD / DS)',
+    'Computer Science & Artificial Intelligence (CSAI)',
+    'Computer Science & Systems Engineering (CSSE)',
+  ],
+  'Emerging / Specialized': [
+    'Artificial Intelligence (AI)',
+    'Machine Learning (ML)',
+    'Artificial Intelligence & Data Science (AI & DS)',
+    'Cyber Security (CS - Cyber)',
+    'Internet of Things (IoT)',
+  ],
+  'Electronics + IT Hybrid': [
+    'Electronics & Communication Engineering (ECE)',
+    'Electronics & Instrumentation Engineering (EIE)',
+    'Electronics & Telecommunication Engineering (ETE)',
+    'Electrical & Electronics Engineering (EEE)',
+  ],
+  'Non-IT': [
+    'Mechanical Engineering (ME)',
+    'Civil Engineering (CE / CIVIL)',
+    'Chemical Engineering (CHE)',
+  ],
+};
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -44,12 +76,11 @@ const Register = () => {
     }
   };
 
-  const fields = [
+  const textFields = [
     { name: 'name', label: 'Full Name', type: 'text', placeholder: 'Rahul Sharma', col: 2 },
     { name: 'email', label: 'Email Address', type: 'email', placeholder: 'you@example.com', col: 2 },
     { name: 'phone', label: 'Phone Number', type: 'tel', placeholder: '+91 98765 43210', col: 1 },
     { name: 'college', label: 'College / University', type: 'text', placeholder: 'IIT Delhi', col: 1 },
-    { name: 'branch', label: 'Branch', type: 'text', placeholder: 'Computer Science', col: 1 },
     { name: 'year', label: 'Year of Study', type: 'text', placeholder: '3rd Year', col: 1 },
   ];
 
@@ -124,7 +155,7 @@ const Register = () => {
 
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-2 gap-4 mb-4">
-              {fields.map(({ name, label, type, placeholder, col }) => (
+              {textFields.map(({ name, label, type, placeholder, col }) => (
                 <div key={name} className={`space-y-1.5 ${col === 2 ? 'col-span-2' : 'col-span-1'}`}>
                   <Label htmlFor={name}>{label}</Label>
                   <Input
@@ -138,6 +169,30 @@ const Register = () => {
                   />
                 </div>
               ))}
+
+              {/* Branch dropdown */}
+              <div className="space-y-1.5 col-span-1">
+                <Label htmlFor="branch">Branch</Label>
+                <Select
+                  id="branch"
+                  name="branch"
+                  value={formData.branch}
+                  onChange={handleChange}
+                  required
+                  className="appearance-none bg-transparent pr-2"
+                >
+                  <option value="">Select branch</option>
+                  {Object.entries(BRANCHES).map(([group, options]) => (
+                    <optgroup className='bg-blue-800' key={group} label={group}>
+                      {options.map(opt => (
+                        <option className='bg-black' key={opt} value={opt}>{opt}</option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </Select>
+              </div>
+
+              {/* Password */}
               <div className="space-y-1.5 col-span-2">
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">

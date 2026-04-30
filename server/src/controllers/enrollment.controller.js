@@ -2,30 +2,24 @@ const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
+const BATCH_INCLUDE = { courses: true };
+
 const enrollInBatch = async (req, res) => {
   try {
     const { batchId } = req.body;
     const studentId = req.user.id;
 
-    // Check if already enrolled
     const existingEnrollment = await prisma.enrollment.findFirst({
-      where: {
-        studentId,
-        batchId: parseInt(batchId)
-      }
+      where: { studentId, batchId: parseInt(batchId) },
     });
 
     if (existingEnrollment) {
       return res.status(400).json({ error: 'Already enrolled in this batch' });
     }
 
-    // Check batch capacity
     const batch = await prisma.batch.findUnique({
       where: { id: parseInt(batchId) },
-      include: {
-        enrollments: true,
-        course: true
-      }
+      include: { enrollments: true, ...BATCH_INCLUDE },
     });
 
     if (!batch) {
@@ -36,25 +30,12 @@ const enrollInBatch = async (req, res) => {
       return res.status(400).json({ error: 'Batch is full' });
     }
 
-    // Create enrollment
     const enrollment = await prisma.enrollment.create({
-      data: {
-        studentId,
-        batchId: parseInt(batchId)
-      },
-      include: {
-        batch: {
-          include: {
-            course: true
-          }
-        }
-      }
+      data: { studentId, batchId: parseInt(batchId) },
+      include: { batch: { include: BATCH_INCLUDE } },
     });
 
-    res.status(201).json({
-      message: 'Enrolled successfully',
-      enrollment
-    });
+    res.status(201).json({ message: 'Enrolled successfully', enrollment });
   } catch (error) {
     console.error('Enrollment error:', error);
     res.status(500).json({ error: 'Failed to enroll' });
@@ -68,16 +49,10 @@ const getMyEnrollments = async (req, res) => {
     const enrollments = await prisma.enrollment.findMany({
       where: { studentId },
       include: {
-        batch: {
-          include: {
-            course: true
-          }
-        },
-        payment: true
+        batch: { include: BATCH_INCLUDE },
+        payment: true,
       },
-      orderBy: {
-        createdAt: 'desc'
-      }
+      orderBy: { createdAt: 'desc' },
     });
 
     res.json({ enrollments });
@@ -102,14 +77,12 @@ const getEnrollmentsByBatch = async (req, res) => {
             phone: true,
             college: true,
             branch: true,
-            year: true
-          }
+            year: true,
+          },
         },
-        payment: true
+        payment: true,
       },
-      orderBy: {
-        createdAt: 'desc'
-      }
+      orderBy: { createdAt: 'desc' },
     });
 
     res.json({ enrollments });
@@ -122,5 +95,5 @@ const getEnrollmentsByBatch = async (req, res) => {
 module.exports = {
   enrollInBatch,
   getMyEnrollments,
-  getEnrollmentsByBatch
+  getEnrollmentsByBatch,
 };
