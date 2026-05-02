@@ -8,15 +8,15 @@ import { Users, IndianRupee, PlayCircle, CheckCircle, BookOpen, Calendar, ArrowR
 import React from 'react';
 
 const StatCard = ({ icon: Icon, label, value, color, bg }) => (
-  <Card className="hover:border-white/10 transition-all">
+  <Card className="hover:border-border/60 transition-all">
     <CardContent className="p-6">
       <div className="flex items-center justify-between mb-4">
-        <p className="text-sm text-white/40">{label}</p>
+        <p className="text-sm text-muted-foreground">{label}</p>
         <div className={`w-9 h-9 rounded-lg ${bg} flex items-center justify-center`}>
           <Icon size={16} className={color} />
         </div>
       </div>
-      <p className="text-3xl font-bold text-white">{value}</p>
+      <p className="text-3xl font-bold text-foreground">{value}</p>
     </CardContent>
   </Card>
 );
@@ -26,10 +26,10 @@ const QuickLink = ({ to, icon: Icon, label, desc, color }) => (
     <Card className="group hover:border-indigo-500/20 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer">
       <CardContent className="p-6">
         <div className={`w-10 h-10 rounded-xl ${color} flex items-center justify-center mb-4`}>
-          <Icon size={18} className="text-white/70" />
+          <Icon size={18} className="text-indigo-400" />
         </div>
-        <h3 className="font-semibold text-white mb-1">{label}</h3>
-        <p className="text-sm text-white/40">{desc}</p>
+        <h3 className="font-semibold text-foreground mb-1">{label}</h3>
+        <p className="text-sm text-muted-foreground">{desc}</p>
         <div className="flex items-center gap-1 mt-3 text-xs text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity">
           Manage <ArrowRight size={11} />
         </div>
@@ -66,8 +66,8 @@ const AdminDashboard = () => {
     <div>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-        <p className="text-sm text-white/40 mt-1">Welcome back. Here's what's happening.</p>
+        <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
+        <p className="text-sm text-muted-foreground mt-1">Welcome back. Here's what's happening.</p>
       </div>
 
       {/* Stats */}
@@ -82,7 +82,7 @@ const AdminDashboard = () => {
 
       {/* Quick links */}
       <div className="mb-8">
-        <h2 className="text-base font-semibold text-white mb-4">Quick Actions</h2>
+        <h2 className="text-base font-semibold text-foreground mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {quickLinks.map((q) => <QuickLink key={q.label} {...q} />)}
         </div>

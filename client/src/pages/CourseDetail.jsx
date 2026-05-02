@@ -182,12 +182,13 @@ const CourseDetail = () => {
             <Card className="sticky top-20 border-indigo-500/20">
               <CardHeader className="pb-4">
                 <CardTitle className="text-2xl font-bold text-white">
-                  <span className="text-white/40 text-sm font-normal mr-1">₹</span>
-                  {displayFee?.toLocaleString('en-IN')}
-                </CardTitle>
-                {batch?.name && (
-                  <p className="text-xs text-white/40 mt-1">{batch.name}</p>
+                  {batch?.name && (
+                    <p className="text-lg text-white/40 mt-1">{batch.name}</p>
                 )}
+                  {/* <span className="text-white/40 text-sm font-normal mr-1">₹</span>
+                  {displayFee?.toLocaleString('en-IN')} */}
+                </CardTitle>
+                
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-3">

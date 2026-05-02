@@ -46,6 +46,8 @@ const BRANCHES = {
   ],
 };
 
+const Year = ['1st Year', '2nd Year', '3rd Year', '4th Year', '5th Year / Dual Degree'];
+
 const Register = () => {
   const [formData, setFormData] = useState({
     name: '', email: '', phone: '', college: '', branch: '', year: '', password: '',
@@ -77,50 +79,49 @@ const Register = () => {
   };
 
   const textFields = [
-    { name: 'name', label: 'Full Name', type: 'text', placeholder: 'Rahul Sharma', col: 2 },
-    { name: 'email', label: 'Email Address', type: 'email', placeholder: 'you@example.com', col: 2 },
-    { name: 'phone', label: 'Phone Number', type: 'tel', placeholder: '+91 98765 43210', col: 1 },
-    { name: 'college', label: 'College / University', type: 'text', placeholder: 'IIT Delhi', col: 1 },
-    { name: 'year', label: 'Year of Study', type: 'text', placeholder: '3rd Year', col: 1 },
+    { name: 'name',    label: 'Full Name',          type: 'text',  placeholder: 'Rahul Sharma',      col: 2 },
+    { name: 'email',   label: 'Email Address',       type: 'email', placeholder: 'you@example.com',   col: 2 },
+    { name: 'phone',   label: 'Mobile Number',       type: 'tel',   placeholder: '+91 98765 43210',   col: 1 },
+    { name: 'college', label: 'College / University', type: 'text', placeholder: 'IIT Delhi',         col: 1 },
   ];
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex bg-white dark:bg-[#060610]">
       {/* Left panel */}
-      <div className="hidden lg:flex lg:w-2/5 relative overflow-hidden flex-col items-center justify-center p-12">
-        <div className="absolute inset-0 bg-linear-to-br from-indigo-900/50 via-violet-900/30 to-transparent" />
+      <div className="hidden lg:flex lg:w-2/5 relative overflow-hidden flex-col items-center justify-center p-12 bg-slate-50 dark:bg-transparent">
+        <div className="absolute inset-0 bg-linear-to-br from-indigo-100/80 via-violet-100/40 to-transparent dark:from-indigo-900/50 dark:via-violet-900/30 dark:to-transparent" />
         <div className="absolute inset-0 grid-pattern opacity-30" />
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-indigo-400/10 rounded-full blur-3xl dark:bg-indigo-500/20" />
 
         <div className="relative max-w-xs">
           <Link to="/" className="flex items-center gap-2.5 mb-8">
             <div className="w-10 h-10 rounded-xl bg-linear-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
               <GraduationCap size={20} className="text-white" />
             </div>
-            <span className="text-xl font-bold text-white">
-              Intern<span className="text-indigo-400">Hub</span>
+            <span className="text-xl font-bold text-slate-900 dark:text-white">
+              Intern<span className="text-indigo-500 dark:text-indigo-400">Hub</span>
             </span>
           </Link>
 
-          <h2 className="text-2xl font-bold text-white mb-3 leading-tight">
+          <h2 className="text-2xl font-bold text-slate-900 mb-3 leading-tight dark:text-white">
             Start your tech career today
           </h2>
-          <p className="text-white/50 text-sm mb-8">
+          <p className="text-slate-500 text-sm mb-8 dark:text-white/50">
             Join thousands of students who landed their first job through InternHub.
           </p>
 
           <div className="space-y-3">
             {PERKS.map((perk) => (
-              <div key={perk} className="flex items-center gap-3 text-sm text-white/70">
-                <CheckCircle2 size={15} className="text-emerald-400 shrink-0" />
+              <div key={perk} className="flex items-center gap-3 text-sm text-slate-600 dark:text-white/70">
+                <CheckCircle2 size={15} className="text-emerald-500 shrink-0 dark:text-emerald-400" />
                 {perk}
               </div>
             ))}
           </div>
 
-          <div className="mt-10 p-4 rounded-xl bg-white/5 border border-white/8">
-            <p className="text-sm font-medium text-white mb-1">One-time fee: ₹4,500</p>
-            <p className="text-xs text-white/40">Includes certificate + placement support</p>
+          <div className="mt-10 p-4 rounded-xl bg-white border border-slate-200 dark:bg-white/5 dark:border-white/8">
+            <p className="text-sm font-medium text-slate-900 mb-1 dark:text-white">One-time fee: ₹4,500</p>
+            <p className="text-xs text-slate-500 dark:text-white/40">Includes certificate + placement support</p>
           </div>
         </div>
       </div>
@@ -133,23 +134,23 @@ const Register = () => {
             <div className="w-8 h-8 rounded-lg bg-linear-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
               <GraduationCap size={16} className="text-white" />
             </div>
-            <span className="text-lg font-bold text-white">
-              Intern<span className="text-indigo-400">Hub</span>
+            <span className="text-lg font-bold text-slate-900 dark:text-white">
+              Intern<span className="text-indigo-500 dark:text-indigo-400">Hub</span>
             </span>
           </Link>
 
-          <h1 className="text-2xl font-bold text-white mb-1">Create your account</h1>
-          <p className="text-sm text-white/40 mb-7">
+          <h1 className="text-2xl font-bold text-slate-900 mb-1 dark:text-white">Create your account</h1>
+          <p className="text-sm text-slate-500 mb-7 dark:text-white/40">
             Already registered?{' '}
-            <Link to="/login" className="text-indigo-400 hover:text-indigo-300 font-medium">
+            <Link to="/login" className="text-indigo-600 hover:text-indigo-700 font-medium dark:text-indigo-400 dark:hover:text-indigo-300">
               Sign in
             </Link>
           </p>
 
           {error && (
-            <div className="flex items-start gap-2.5 p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 mb-6">
-              <AlertCircle size={15} className="text-red-400 shrink-0 mt-0.5" />
-              <p className="text-sm text-red-400">{error}</p>
+            <div className="flex items-start gap-2.5 p-3.5 rounded-xl bg-red-50 border border-red-200 mb-6 dark:bg-red-500/10 dark:border-red-500/20">
+              <AlertCircle size={15} className="text-red-500 shrink-0 mt-0.5 dark:text-red-400" />
+              <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
             </div>
           )}
 
@@ -170,7 +171,23 @@ const Register = () => {
                 </div>
               ))}
 
-              {/* Branch dropdown */}
+              <div className="space-y-1.5 col-span-1">
+                <Label htmlFor="year">Year of Study</Label>
+                <Select
+                  id="year"
+                  name="year"
+                  value={formData.year}
+                  onChange={handleChange}
+                  required
+                  className="appearance-none pr-2"
+                >
+                  <option value="">Select year</option>
+                  {Year.map(opt => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                </Select>
+              </div>
+
               <div className="space-y-1.5 col-span-1">
                 <Label htmlFor="branch">Branch</Label>
                 <Select
@@ -179,20 +196,19 @@ const Register = () => {
                   value={formData.branch}
                   onChange={handleChange}
                   required
-                  className="appearance-none bg-transparent pr-2"
+                  className="appearance-none pr-2"
                 >
                   <option value="">Select branch</option>
                   {Object.entries(BRANCHES).map(([group, options]) => (
-                    <optgroup className='bg-blue-800' key={group} label={group}>
+                    <optgroup key={group} label={group}>
                       {options.map(opt => (
-                        <option className='bg-black' key={opt} value={opt}>{opt}</option>
+                        <option key={opt} value={opt}>{opt}</option>
                       ))}
                     </optgroup>
                   ))}
                 </Select>
               </div>
 
-              {/* Password */}
               <div className="space-y-1.5 col-span-2">
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">
@@ -209,7 +225,7 @@ const Register = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors dark:text-white/30 dark:hover:text-white/60"
                   >
                     {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
@@ -223,11 +239,11 @@ const Register = () => {
             </Button>
           </form>
 
-          <p className="text-xs text-center text-white/20 mt-6">
+          <p className="text-xs text-center text-slate-400 mt-6 dark:text-white/20">
             By creating an account, you agree to our{' '}
-            <Link to="/" className="text-white/40 hover:text-white/60">Terms of Service</Link>
+            <Link to="/" className="text-slate-500 hover:text-slate-700 dark:text-white/40 dark:hover:text-white/60">Terms of Service</Link>
             {' '}and{' '}
-            <Link to="/" className="text-white/40 hover:text-white/60">Privacy Policy</Link>
+            <Link to="/" className="text-slate-500 hover:text-slate-700 dark:text-white/40 dark:hover:text-white/60">Privacy Policy</Link>
           </p>
         </div>
       </div>

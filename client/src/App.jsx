@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AdminLayout from './components/AdminLayout';
@@ -20,6 +21,28 @@ import AdminRoute from './routes/AdminRoute';
 import React from 'react';
 
 const ADMIN_PATHS = ['/admin'];
+
+function ThemedToaster() {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  return (
+    <Toaster
+      position="top-right"
+      toastOptions={{
+        style: {
+          background: isDark ? '#13131f' : '#ffffff',
+          color: isDark ? '#fff' : '#0f172a',
+          border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid #e2e8f0',
+          borderRadius: '12px',
+          fontSize: '14px',
+          boxShadow: isDark
+            ? '0 4px 24px rgba(0,0,0,0.4)'
+            : '0 4px 16px rgba(0,0,0,0.08)',
+        },
+      }}
+    />
+  );
+}
 
 function Layout() {
   const location = useLocation();
@@ -69,23 +92,14 @@ function Layout() {
 
 function App() {
   return (
+    <ThemeProvider>
     <AuthProvider>
       <Router>
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            style: {
-              background: '#13131f',
-              color: '#fff',
-              border: '1px solid rgba(255,255,255,0.08)',
-              borderRadius: '12px',
-              fontSize: '14px',
-            },
-          }}
-        />
+        <ThemedToaster />
         <Layout />
       </Router>
     </AuthProvider>
+    </ThemeProvider>
   );
 }
 

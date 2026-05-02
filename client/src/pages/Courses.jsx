@@ -8,7 +8,7 @@ import { Search, BookOpen, SlidersHorizontal } from 'lucide-react';
 import React from 'react';
 
 const CourseSkeleton = () => (
-  <div className="rounded-xl border border-white/6 bg-white/3 overflow-hidden">
+  <div className="rounded-xl border border-border bg-muted/20 overflow-hidden">
     <Skeleton className="h-44 w-full rounded-none" />
     <div className="p-5 space-y-3">
       <div className="flex gap-2">
@@ -56,22 +56,22 @@ const Courses = () => {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <section className="relative py-16 border-b border-white/6">
+      <section className="relative py-16 border-b border-border">
         <div className="absolute inset-0 hero-gradient opacity-50" />
         <div className="relative container mx-auto px-4 sm:px-6 text-center">
           <Badge variant="secondary" className="mb-4">
             <BookOpen size={11} className="mr-1" />
             Programs
           </Badge>
-          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3">
+          <h1 className="text-3xl sm:text-4xl font-bold text-pretty mb-3">
             Internship <span className="gradient-text">Programs</span>
           </h1>
-          <p className="text-white/40 mb-8 max-w-md mx-auto">
+          <p className=" mb-8 max-w-md mx-auto">
             Industry-aligned programs built to get you hired. Choose your path.
           </p>
           {/* Search */}
           <div className="relative max-w-md mx-auto">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/60" />
             <Input
               placeholder="Search courses, skills, technologies..."
               value={search}
@@ -87,9 +87,9 @@ const Courses = () => {
         {/* Results info */}
         {!loading && (
           <div className="flex items-center justify-between mb-6">
-            <p className="text-sm text-white/40">
+            <p className="text-sm text-muted-foreground">
               {filtered.length} program{filtered.length !== 1 ? 's' : ''} found
-              {search && <span> for "<span className="text-white/70">{search}</span>"</span>}
+              {search && <span> for "<span className="text-foreground">{search}</span>"</span>}
             </p>
           </div>
         )}
@@ -107,11 +107,11 @@ const Courses = () => {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/8 flex items-center justify-center mb-4">
-              <Search size={24} className="text-white/20" />
+            <div className="w-16 h-16 rounded-2xl bg-muted/50 border border-border flex items-center justify-center mb-4">
+              <Search size={24} className="text-muted-foreground/30" />
             </div>
-            <h3 className="text-lg font-medium text-white mb-2">No courses found</h3>
-            <p className="text-sm text-white/40 mb-6">
+            <h3 className="text-lg font-medium text-foreground mb-2">No courses found</h3>
+            <p className="text-sm text-muted-foreground mb-6">
               {search ? `No results for "${search}". Try a different search.` : 'No courses available yet.'}
             </p>
             {search && (

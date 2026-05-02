@@ -157,8 +157,8 @@ const ManageBatches = () => {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-white">Batches</h1>
-          <p className="text-sm text-white/40 mt-1">{batches.length} batch{batches.length !== 1 ? 'es' : ''} total</p>
+          <h1 className="text-2xl font-bold text-foreground">Batches</h1>
+          <p className="text-sm text-muted-foreground mt-1">{batches.length} batch{batches.length !== 1 ? 'es' : ''} total</p>
         </div>
         <Button variant="gradient" onClick={openCreate} className="gap-2">
           <Plus size={15} /> New Batch
@@ -172,11 +172,11 @@ const ManageBatches = () => {
           ))}
         </div>
       ) : batches.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-24 border border-dashed border-white/10 rounded-2xl">
-          <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center mb-4">
-            <Calendar size={22} className="text-white/20" />
+        <div className="flex flex-col items-center justify-center py-24 border border-dashed border-border rounded-2xl">
+          <div className="w-14 h-14 rounded-2xl bg-muted/50 flex items-center justify-center mb-4">
+            <Calendar size={22} className="text-muted-foreground/40" />
           </div>
-          <p className="text-white/40 mb-4">No batches yet</p>
+          <p className="text-muted-foreground mb-4">No batches yet</p>
           <Button variant="outline" onClick={openCreate} className="gap-2">
             <Plus size={14} /> Create first batch
           </Button>
@@ -188,19 +188,19 @@ const ManageBatches = () => {
             const enrolled = batch.enrollments?.length || 0;
             const pct = batch.totalSeats > 0 ? Math.round((enrolled / batch.totalSeats) * 100) : 0;
             return (
-              <Card key={batch.id} className="hover:border-white/10 transition-all cursor-pointer" onClick={() => openBatchDetail(batch)}>
+              <Card key={batch.id} className="hover:border-border/60 transition-all cursor-pointer" onClick={() => openBatchDetail(batch)}>
                 <CardContent className="p-5">
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       {/* Name + status */}
                       <div className="flex items-center gap-2.5 mb-1">
-                        <h3 className="font-semibold text-white truncate">{batch.name}</h3>
+                        <h3 className="font-semibold text-foreground truncate">{batch.name}</h3>
                         <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
                       </div>
 
                       {/* Description */}
                       {batch.description && (
-                        <p className="text-xs text-white/40 mb-2 line-clamp-1">{batch.description}</p>
+                        <p className="text-xs text-muted-foreground mb-2 line-clamp-1">{batch.description}</p>
                       )}
 
                       {/* Courses */}
@@ -213,7 +213,7 @@ const ManageBatches = () => {
                       </div>
 
                       {/* Meta row */}
-                      <div className="flex flex-wrap items-center gap-4 text-xs text-white/40">
+                      <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1.5">
                           <Calendar size={12} />
                           {new Date(batch.startDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
@@ -222,7 +222,7 @@ const ManageBatches = () => {
                           <Users size={12} />
                           {enrolled} / {batch.totalSeats}
                         </span>
-                        <span className="flex items-center gap-1.5 text-emerald-400/70">
+                        <span className="flex items-center gap-1.5 text-emerald-500">
                           <IndianRupee size={12} />
                           {batch.fee?.toLocaleString('en-IN')}
                         </span>
@@ -230,10 +230,10 @@ const ManageBatches = () => {
 
                       {/* Progress */}
                       <div className="mt-3 flex items-center gap-2">
-                        <div className="flex-1 h-1.5 rounded-full bg-white/5">
+                        <div className="flex-1 h-1.5 rounded-full bg-muted">
                           <div className="h-full rounded-full bg-indigo-500 transition-all" style={{ width: `${pct}%` }} />
                         </div>
-                        <span className="text-xs text-white/30">{pct}%</span>
+                        <span className="text-xs text-muted-foreground/60">{pct}%</span>
                       </div>
                     </div>
 
@@ -266,22 +266,22 @@ const ManageBatches = () => {
       {/* Batch Detail Modal */}
       {detailBatch && (
         <>
-          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm" onClick={() => setDetailBatch(null)} />
-          <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-2xl max-h-[85vh] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/10 bg-[#0d0d1a] flex flex-col shadow-2xl">
-            <div className="flex items-start justify-between p-6 border-b border-white/8 shrink-0">
+          <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={() => setDetailBatch(null)} />
+          <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-2xl max-h-[85vh] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-border bg-card flex flex-col shadow-2xl">
+            <div className="flex items-start justify-between p-6 border-b border-border shrink-0">
               <div>
-                <h2 className="text-lg font-semibold text-white">{detailBatch.name}</h2>
+                <h2 className="text-lg font-semibold text-foreground">{detailBatch.name}</h2>
                 {detailBatch.description && (
-                  <p className="text-xs text-white/40 mt-0.5">{detailBatch.description}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{detailBatch.description}</p>
                 )}
-                <div className="flex flex-wrap gap-4 mt-2 text-xs text-white/40">
+                <div className="flex flex-wrap gap-4 mt-2 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1.5"><Calendar size={12} />
                     {new Date(detailBatch.startDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
                   </span>
                   <span className="flex items-center gap-1.5"><Users size={12} />
                     {detailBatch.enrollments?.length || 0} / {detailBatch.totalSeats} seats
                   </span>
-                  <span className="flex items-center gap-1.5 text-emerald-400/80">
+                  <span className="flex items-center gap-1.5 text-emerald-500">
                     <IndianRupee size={12} />₹{detailBatch.fee?.toLocaleString('en-IN')}
                   </span>
                   <Badge variant={STATUS_BADGE[detailBatch.status]?.variant}>{STATUS_BADGE[detailBatch.status]?.label}</Badge>
@@ -294,23 +294,23 @@ const ManageBatches = () => {
                   ))}
                 </div>
               </div>
-              <button onClick={() => setDetailBatch(null)} className="text-white/40 hover:text-white p-1 rounded-lg hover:bg-white/5 shrink-0">
+              <button onClick={() => setDetailBatch(null)} className="text-muted-foreground hover:text-foreground p-1 rounded-lg hover:bg-accent shrink-0">
                 <X size={16} />
               </button>
             </div>
 
             <div className="overflow-y-auto flex-1 p-6">
-              <h3 className="text-sm font-semibold text-white/60 uppercase tracking-wider mb-4">
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">
                 Enrolled Students ({batchStudents.length})
               </h3>
               {detailLoading ? (
                 <div className="space-y-2">
                   {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="h-14 rounded-xl bg-white/4 animate-pulse" />
+                    <div key={i} className="h-14 rounded-xl bg-muted/30 animate-pulse" />
                   ))}
                 </div>
               ) : batchStudents.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12 text-white/30">
+                <div className="flex flex-col items-center justify-center py-12 text-muted-foreground/50">
                   <Users size={28} className="mb-3" />
                   <p className="text-sm">No students enrolled yet</p>
                 </div>
@@ -320,17 +320,17 @@ const ManageBatches = () => {
                     const s = enrollment.student;
                     const paid = enrollment.payment?.status === 'SUCCESS';
                     return (
-                      <div key={enrollment.id} className="flex items-center justify-between gap-4 p-3.5 rounded-xl bg-white/4 border border-white/6">
+                      <div key={enrollment.id} className="flex items-center justify-between gap-4 p-3.5 rounded-xl bg-muted/20 border border-border">
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-8 h-8 rounded-full bg-indigo-500/20 border border-indigo-500/20 flex items-center justify-center text-xs font-bold text-indigo-300 shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-indigo-500/20 border border-indigo-500/20 flex items-center justify-center text-xs font-bold text-indigo-400 shrink-0">
                             {s?.name?.charAt(0)?.toUpperCase()}
                           </div>
                           <div className="min-w-0">
-                            <p className="text-sm font-medium text-white truncate">{s?.name}</p>
-                            <p className="text-xs text-white/40 truncate">{s?.college} · {s?.branch}</p>
+                            <p className="text-sm font-medium text-foreground truncate">{s?.name}</p>
+                            <p className="text-xs text-muted-foreground truncate">{s?.college} · {s?.branch}</p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-3 text-xs text-white/40 shrink-0">
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground shrink-0">
                           <span className="hidden sm:flex items-center gap-1"><Mail size={11} />{s?.email}</span>
                           {s?.phone && <span className="hidden md:flex items-center gap-1"><Phone size={11} />{s?.phone}</span>}
                           <Badge variant={paid ? 'success' : 'warning'}>{paid ? 'Paid' : 'Pending'}</Badge>
@@ -388,10 +388,10 @@ const ManageBatches = () => {
               </div>
 
               <div className="space-y-1.5">
-                <Label>Courses Included * <span className="text-white/30 font-normal">(select one or more)</span></Label>
-                <div className="rounded-lg border border-white/10 bg-white/3 p-3 space-y-2 max-h-44 overflow-y-auto">
+                <Label>Courses Included * <span className="text-muted-foreground/60 font-normal">(select one or more)</span></Label>
+                <div className="rounded-lg border border-border bg-muted/20 p-3 space-y-2 max-h-44 overflow-y-auto">
                   {courses.length === 0 ? (
-                    <p className="text-xs text-white/30 text-center py-2">No courses available</p>
+                    <p className="text-xs text-muted-foreground/60 text-center py-2">No courses available</p>
                   ) : courses.map(c => {
                     const checked = formData.courseIds.includes(c.id);
                     return (
@@ -401,12 +401,12 @@ const ManageBatches = () => {
                           className={`w-4 h-4 rounded shrink-0 border flex items-center justify-center transition-colors cursor-pointer ${
                             checked
                               ? 'bg-indigo-500 border-indigo-500'
-                              : 'border-white/20 bg-white/5 group-hover:border-indigo-400/50'
+                              : 'border-border bg-muted group-hover:border-indigo-400/50'
                           }`}
                         >
                           {checked && <CheckCircle2 size={10} className="text-white" />}
                         </div>
-                        <span className="text-sm text-white/80 leading-snug select-none" onClick={() => toggleCourse(c.id)}>
+                        <span className="text-sm text-foreground/80 leading-snug select-none" onClick={() => toggleCourse(c.id)}>
                           {c.title}
                         </span>
                       </label>
@@ -460,8 +460,8 @@ const ManageBatches = () => {
           <DialogHeader>
             <DialogTitle>Delete Batch</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-white/60 mb-6">
-            Are you sure you want to delete <span className="text-white font-medium">"{deleteTarget?.name}"</span>?
+          <p className="text-sm text-muted-foreground mb-6">
+            Are you sure you want to delete <span className="text-foreground font-medium">"{deleteTarget?.name}"</span>?
             This will also remove all enrollments in this batch.
           </p>
           <DialogFooter>

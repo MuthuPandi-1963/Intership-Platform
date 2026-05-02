@@ -130,8 +130,8 @@ const ManageCourses = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-white">Courses</h1>
-          <p className="text-sm text-white/40 mt-1">{courses.length} program{courses.length !== 1 ? 's' : ''} available</p>
+          <h1 className="text-2xl font-bold text-foreground">Courses</h1>
+          <p className="text-sm text-muted-foreground mt-1">{courses.length} program{courses.length !== 1 ? 's' : ''} available</p>
         </div>
         <Button variant="gradient" onClick={openCreate} className="gap-2">
           <Plus size={15} /> New Course
@@ -146,11 +146,11 @@ const ManageCourses = () => {
           ))}
         </div>
       ) : courses.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-24 border border-dashed border-white/10 rounded-2xl">
-          <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center mb-4">
-            <BookOpen size={22} className="text-white/20" />
+        <div className="flex flex-col items-center justify-center py-24 border border-dashed border-border rounded-2xl">
+          <div className="w-14 h-14 rounded-2xl bg-muted/50 flex items-center justify-center mb-4">
+            <BookOpen size={22} className="text-muted-foreground/40" />
           </div>
-          <p className="text-white/40 mb-4">No courses yet</p>
+          <p className="text-muted-foreground mb-4">No courses yet</p>
           <Button variant="outline" onClick={openCreate} className="gap-2">
             <Plus size={14} /> Create your first course
           </Button>
@@ -158,18 +158,18 @@ const ManageCourses = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {courses.map((course) => (
-            <Card key={course.id} className="flex flex-col overflow-hidden hover:border-white/10 transition-all">
+            <Card key={course.id} className="flex flex-col overflow-hidden hover:border-border/60 transition-all">
               {course.image ? (
                 <img src={course.image} alt={course.title} className="h-36 w-full object-cover" />
               ) : (
                 <div className="h-36 bg-linear-to-br from-indigo-500/10 to-violet-500/10 flex items-center justify-center">
-                  <BookOpen size={30} className="text-white/15" />
+                  <BookOpen size={30} className="text-muted-foreground/20" />
                 </div>
               )}
               <CardContent className="p-5 flex flex-col flex-1">
-                <h3 className="font-semibold text-white mb-1 line-clamp-1">{course.title}</h3>
-                <p className="text-xs text-white/40 line-clamp-2 mb-3 flex-1">{course.description}</p>
-                <div className="flex items-center gap-3 text-xs text-white/40 mb-4">
+                <h3 className="font-semibold text-foreground mb-1 line-clamp-1">{course.title}</h3>
+                <p className="text-xs text-muted-foreground line-clamp-2 mb-3 flex-1">{course.description}</p>
+                <div className="flex items-center gap-3 text-xs text-muted-foreground mb-4">
                   <span className="flex items-center gap-1"><Clock size={11} />{course.duration}</span>
                   <span className="flex items-center gap-1"><IndianRupee size={11} />{course.fee?.toLocaleString('en-IN')}</span>
                 </div>
@@ -223,7 +223,7 @@ const ManageCourses = () => {
                   <Input type="number" placeholder="4500" value={formData.fee} onChange={f('fee')} required min="0" />
                 </div>
                 <div className="col-span-2 space-y-1.5">
-                  <Label>Tech Stack <span className="text-white/30">(comma-separated)</span></Label>
+                  <Label>Tech Stack <span className="text-muted-foreground/60">(comma-separated)</span></Label>
                   <Input placeholder="React, Node.js, PostgreSQL" value={formData.techStack} onChange={f('techStack')} required />
                 </div>
                 <div className="col-span-2 space-y-1.5">
@@ -232,7 +232,7 @@ const ManageCourses = () => {
                 </div>
                 <div className="col-span-2 space-y-1.5">
                   <Label>
-                    Syllabus <span className="text-white/30">(JSON array)</span>
+                    Syllabus <span className="text-muted-foreground/60">(JSON array)</span>
                   </Label>
                   <Textarea
                     placeholder={'[{"week": 1, "topics": ["HTML", "CSS"]}, {"week": 2, "topics": ["JavaScript"]}]'}
@@ -262,8 +262,8 @@ const ManageCourses = () => {
           <DialogHeader>
             <DialogTitle>Delete Course</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-white/50 mb-2">
-            Are you sure you want to delete <span className="text-white font-medium">"{deleteTarget?.title}"</span>?
+          <p className="text-sm text-muted-foreground mb-2">
+            Are you sure you want to delete <span className="text-foreground font-medium">"{deleteTarget?.title}"</span>?
             This action cannot be undone.
           </p>
           <DialogFooter>

@@ -36,10 +36,10 @@ const CourseCard = ({ course, index = 0 }) => {
           </div>
         )}
         {/* Overlay gradient */}
-        <div className="absolute inset-0 bg-linear-to-t from-[#0a0a14]/80 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
 
         {/* Badges */}
-        <div className="absolute top-3 left-3 flex gap-2">
+        {/* <div className="absolute top-3 left-3 flex gap-2">
           {batch?.status === 'ONGOING' && (
             <Badge variant="success" className="text-xs">Live Now</Badge>
           )}
@@ -49,7 +49,7 @@ const CourseCard = ({ course, index = 0 }) => {
           {seatsLeft !== null && seatsLeft <= 20 && seatsLeft > 0 && (
             <Badge variant="warning" className="text-xs">Only {seatsLeft} left</Badge>
           )}
-        </div>
+        </div> */}
       </div>
 
       <CardContent className="p-5 flex flex-col flex-1">
@@ -61,21 +61,21 @@ const CourseCard = ({ course, index = 0 }) => {
             </span>
           ))}
           {course.techStack?.length > 3 && (
-            <span className="text-xs px-2 py-0.5 rounded-full bg-white/5 text-white/40">
+            <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
               +{course.techStack.length - 3}
             </span>
           )}
         </div>
 
-        <h3 className="font-semibold text-white text-base mb-2 leading-snug group-hover:text-indigo-300 transition-colors">
+        <h3 className="font-semibold text-foreground text-base mb-2 leading-snug group-hover:text-indigo-500 transition-colors">
           {course.title}
         </h3>
-        <p className="text-sm text-white/40 leading-relaxed mb-4 line-clamp-2 flex-1">
+        <p className="text-sm text-muted-foreground leading-relaxed mb-4 line-clamp-2 flex-1">
           {course.description}
         </p>
 
         {/* Meta info */}
-        <div className="grid grid-cols-2 gap-2 mb-4">
+        {/* <div className="grid grid-cols-2 gap-2 mb-4">
           <div className="flex items-center gap-1.5 text-xs text-white/40">
             <Clock size={12} className="text-white/30" />
             {course.duration}
@@ -93,7 +93,7 @@ const CourseCard = ({ course, index = 0 }) => {
           <div className="flex items-center gap-1.5 text-xs text-white/40">
             <span className="text-white/20">Starts</span> {startDate}
           </div>
-        </div>
+        </div> */}
 
         <Link to={`/courses/${course.id}`}>
           <Button variant="outline" size="sm" className="w-full gap-1.5 group/btn">

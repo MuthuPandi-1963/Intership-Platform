@@ -21,7 +21,7 @@ const STATUS_CONFIG = {
 };
 
 const BatchSkeleton = () => (
-  <div className="rounded-xl border border-white/6 bg-white/3 p-5 space-y-3">
+  <div className="rounded-xl border border-border bg-muted/20 p-5 space-y-3">
     <div className="flex gap-2"><Skeleton className="h-5 w-20 rounded-full" /></div>
     <Skeleton className="h-5 w-2/3" />
     <Skeleton className="h-4 w-full" />
@@ -106,21 +106,21 @@ const Batches = () => {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <section className="relative py-16 border-b border-white/6">
+      <section className="relative py-16 border-b border-border">
         <div className="absolute inset-0 hero-gradient opacity-50" />
         <div className="relative container mx-auto px-4 sm:px-6 text-center">
           <Badge variant="secondary" className="mb-4">
             <Calendar size={11} className="mr-1" />
             Batches
           </Badge>
-          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3">
+          <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-3">
             Available <span className="gradient-text">Batches</span>
           </h1>
-          <p className="text-white/40 mb-8 max-w-md mx-auto">
+          <p className="text-muted-foreground mb-8 max-w-md mx-auto">
             Enroll in a batch that bundles multiple programs at one fee. Start learning together.
           </p>
           <div className="relative max-w-md mx-auto">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/60" />
             <Input
               placeholder="Search batches or courses..."
               value={search}
@@ -134,9 +134,9 @@ const Batches = () => {
       {/* Content */}
       <div className="container mx-auto px-4 sm:px-6 py-10">
         {!loading && (
-          <p className="text-sm text-white/40 mb-6">
+          <p className="text-sm text-muted-foreground mb-6">
             {filtered.length} batch{filtered.length !== 1 ? 'es' : ''} available
-            {search && <span> for "<span className="text-white/70">{search}</span>"</span>}
+            {search && <span> for "<span className="text-foreground/70">{search}</span>"</span>}
           </p>
         )}
 
@@ -146,11 +146,11 @@ const Batches = () => {
           </div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/8 flex items-center justify-center mb-4">
-              <Calendar size={24} className="text-white/20" />
+            <div className="w-16 h-16 rounded-2xl bg-muted/50 border border-border flex items-center justify-center mb-4">
+              <Calendar size={24} className="text-muted-foreground/30" />
             </div>
-            <h3 className="text-lg font-medium text-white mb-2">No batches found</h3>
-            <p className="text-sm text-white/40">
+            <h3 className="text-lg font-medium text-foreground mb-2">No batches found</h3>
+            <p className="text-sm text-muted-foreground">
               {search ? `No results for "${search}".` : 'No active batches available right now.'}
             </p>
             {search && (
@@ -163,7 +163,7 @@ const Batches = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((batch) => {
               const statusCfg = STATUS_CONFIG[batch.status] || STATUS_CONFIG.NOT_STARTED;
-              const enrolled = isEnrolled(batch.id);
+              const enrolledBatch = isEnrolled(batch.id);
               const seats = batch.seatsLeft ?? (batch.totalSeats - (batch.enrollments?.length || batch.enrolledCount || 0));
               const startDate = batch.startDate
                 ? new Date(batch.startDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
@@ -174,12 +174,12 @@ const Batches = () => {
                   <CardContent className="p-5 flex flex-col flex-1">
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <Badge variant={statusCfg.variant}>{statusCfg.label}</Badge>
-                      {enrolled && <Badge variant="success">Enrolled</Badge>}
+                      {enrolledBatch && <Badge variant="success">Enrolled</Badge>}
                     </div>
 
-                    <h3 className="font-semibold text-white text-base mb-1 leading-snug">{batch.name}</h3>
+                    <h3 className="font-semibold text-foreground text-base mb-1 leading-snug">{batch.name}</h3>
                     {batch.description && (
-                      <p className="text-sm text-white/40 mb-3 line-clamp-2">{batch.description}</p>
+                      <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{batch.description}</p>
                     )}
 
                     {/* Courses included */}
@@ -192,10 +192,10 @@ const Batches = () => {
                     </div>
 
                     {/* Meta */}
-                    <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-xs text-white/40 mb-5">
+                    <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-xs text-muted-foreground mb-5">
                       <span className="flex items-center gap-1.5">
-                        <IndianRupee size={11} className="text-emerald-400/70" />
-                        <span className="text-emerald-400/90 font-medium">₹{batch.fee?.toLocaleString('en-IN')}</span>
+                        <IndianRupee size={11} className="text-emerald-500" />
+                        <span className="text-emerald-500 font-medium">₹{batch.fee?.toLocaleString('en-IN')}</span>
                       </span>
                       <span className="flex items-center gap-1.5">
                         <Users size={11} />
@@ -208,7 +208,7 @@ const Batches = () => {
                     </div>
 
                     <div className="mt-auto">
-                      {enrolled ? (
+                      {enrolledBatch ? (
                         <Button variant="outline" size="sm" className="w-full" onClick={() => navigate('/dashboard')}>
                           Go to Dashboard
                         </Button>
@@ -233,12 +233,12 @@ const Batches = () => {
       {/* Enroll Modal */}
       {enrollTarget && (
         <>
-          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm" onClick={() => !enrolling && setEnrollTarget(null)} />
-          <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/10 bg-[#0d0d1a] p-6 shadow-2xl">
+          <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={() => !enrolling && setEnrollTarget(null)} />
+          <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-border bg-card p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-white">Complete Enrollment</h2>
+              <h2 className="text-lg font-semibold text-foreground">Complete Enrollment</h2>
               {!enrolling && (
-                <button onClick={() => setEnrollTarget(null)} className="text-white/40 hover:text-white p-1 rounded-lg hover:bg-white/5">
+                <button onClick={() => setEnrollTarget(null)} className="text-muted-foreground hover:text-foreground p-1 rounded-lg hover:bg-accent transition-colors">
                   <X size={16} />
                 </button>
               )}
@@ -246,27 +246,27 @@ const Batches = () => {
 
             {enrolled === enrollTarget.id ? (
               <div className="flex flex-col items-center gap-3 py-6">
-                <CheckCircle2 size={40} className="text-emerald-400" />
-                <p className="text-white font-medium">Enrolled successfully!</p>
-                <p className="text-sm text-white/40">Redirecting to dashboard…</p>
+                <CheckCircle2 size={40} className="text-emerald-500" />
+                <p className="text-foreground font-medium">Enrolled successfully!</p>
+                <p className="text-sm text-muted-foreground">Redirecting to dashboard…</p>
               </div>
             ) : (
               <>
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between text-sm">
-                    <span className="text-white/50">Batch</span>
-                    <span className="text-white font-medium">{enrollTarget.name}</span>
+                    <span className="text-muted-foreground">Batch</span>
+                    <span className="text-foreground font-medium">{enrollTarget.name}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-white/50">Courses</span>
-                    <span className="text-white/70 text-right max-w-[60%]">
+                    <span className="text-muted-foreground">Courses</span>
+                    <span className="text-foreground/70 text-right max-w-[60%]">
                       {enrollTarget.courses?.map(c => c.title).join(', ')}
                     </span>
                   </div>
                   <Separator />
                   <div className="flex justify-between">
-                    <span className="text-white/50">Total Amount</span>
-                    <span className="text-white font-bold text-lg">₹{enrollTarget.fee?.toLocaleString('en-IN')}</span>
+                    <span className="text-muted-foreground">Total Amount</span>
+                    <span className="text-foreground font-bold text-lg">₹{enrollTarget.fee?.toLocaleString('en-IN')}</span>
                   </div>
                 </div>
 
@@ -284,7 +284,7 @@ const Batches = () => {
                     Cancel
                   </Button>
                 </div>
-                <p className="text-xs text-center text-white/30 mt-3 flex items-center justify-center gap-1">
+                <p className="text-xs text-center text-muted-foreground/60 mt-3 flex items-center justify-center gap-1">
                   <Shield size={11} />
                   Demo payment — no real charge
                 </p>
